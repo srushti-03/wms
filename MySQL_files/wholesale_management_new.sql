@@ -3,7 +3,6 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 15, 2016 at 07:01 PM
 -- Server version: 10.1.16-MariaDB
 -- PHP Version: 5.6.24
 
@@ -17,13 +16,15 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `wholesale_management`
+-- Name of the database : `wholesale_management`
 --
 
 DELIMITER $$
 --
 -- Procedures
---
+--This procedure is creating a stored procedure in MySQL database that takes three input parameters: product, quant, and disc and
+-- calculates the discount based on the total price of the product and quantity purchased.
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `discount_calc` (IN `product` INT(10), IN `quant` INT(10), OUT `disc` INT(10))  BEGIN
 declare price int; 
 declare disc int; 
@@ -31,11 +32,19 @@ declare total int;
 select USP into price from price_list where ProductID = product;
 set total=quant*price; 
 if (tot >= 20000 and tot < 40000) THEN
-   set disc=tot*0.05;
+   set disc=tot*0.05;                                 
+--If the total price is greater than or equal to 20,000 and less than 40,000, it applies a 5% discount.
+
 elseif (tot >= 40000 and tot < 60000) THEN
    set disc=tot*0.075;
+   
+-- If the total price is greater than or equal to 40,000 and less than 60,000, it applies a 7.5% discount.
+
 elseif (tot >= 100000) THEN
    set disc=tot*0.1;
+   
+-- If the total price is greater than or equal to 100,000, it applies a 10% discount.
+
 end if;
 end$$
 
@@ -44,7 +53,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `category`
+-- Defining the structure for table `category`
 --
 
 CREATE TABLE `category` (
@@ -53,19 +62,20 @@ CREATE TABLE `category` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `category`
+-- inserting data into table `category`
 --
 
 INSERT INTO `category` (`CategoryID`, `CategoryName`) VALUES
-(1, 'Washing Powder'),
-(2, 'Cosmetics'),
-(3, 'Stationary'),
-(4, 'Garments');
+(1, 'pen'),
+(2, 'shampoo'),
+(3, 'hairoil'),
+(4, 'chips');
+(5, 'toothpaste');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `customer_information`
+--Defining the structure for table `customer_information`
 --
 
 CREATE TABLE `customer_information` (
@@ -77,18 +87,20 @@ CREATE TABLE `customer_information` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `customer_information`
+-- inserting values into table `customer_information`
 --
 
 INSERT INTO `customer_information` (`CustomerID`, `Name`, `Address`, `Phone`, `Password`) VALUES
-('C11', 'Avijit Verma', 'XYZ', '7901012908', 'abc123'),
-('C12', 'Swargam Avinash', 'ABC', '7901012908', 'qwerty'),
-('C13', 'Pranavendra', 'XWR', '7077102278', 'asdfgh');
+('C1', 'Shefali Shah', 'XYZ', '9090909090', 'abc123'),
+('C2', 'Kashsih Jethmalani', 'ABC', '9000190001', 'xyz123'),
+('C3', 'Vishwa Joshi', 'PQR', '9900990099', 'pqr123');
+('C4', 'Srushti Thakar', 'RST', '9898098980', 'rst123');
+('C5', 'Vishwa Joshi', 'DEF', '9191091910', 'def123');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `depleted_product`
+-- Defining the structure for table `depleted_product`
 --
 
 CREATE TABLE `depleted_product` (
@@ -99,7 +111,7 @@ CREATE TABLE `depleted_product` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `payment`
+-- Defining the structure for table `payment`
 --
 
 CREATE TABLE `payment` (
@@ -110,19 +122,20 @@ CREATE TABLE `payment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `payment`
+-- inserting the values into the table `payment`
 --
 
 INSERT INTO `payment` (`TransactionID`, `Amount_Paid`, `Mode`, `Transaction_Date`) VALUES
-(22, 4400, 'debit card', 2016),
-(25, 4100, 'cash', 2016),
-(27, 4500, 'cash', 2016),
-(28, 1500, 'debit card', 2016);
+(21, 4000, 'online payment', 2023),
+(22, 3000, 'cash', 2023),
+(23, 2500, 'cash', 2023),
+(24, 3200, 'debit card',2023),
+(25, 1000, 'debit card', 2023);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `price_list`
+-- defining the structure for table `price_list`
 --
 
 CREATE TABLE `price_list` (
@@ -131,20 +144,20 @@ CREATE TABLE `price_list` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `price_list`
+-- inserting values into the table `price_list`
 --
 
 INSERT INTO `price_list` (`ProductID`, `USP`) VALUES
 (1, 70),
 (2, 100),
-(3, 55),
-(4, 150),
-(5, 300);
+(3, 500),
+(4, 200),
+(5, 120);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `product`
+-- defining the structure for table `product`
 --
 
 CREATE TABLE `product` (
@@ -162,15 +175,20 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`ProductID`, `Pname`, `CategoryID`, `SupplierID`, `Quantity_in_stock`, `UnitPrice`, `ReorderLevel`) VALUES
-(1, 'Nirma', 1, 1, 20, 60, 10),
-(2, 'Surf', 1, 1, 55, 70, 10),
-(3, 'Pond Powder', 2, 2, 35, 40, 10),
-(4, 'Garnier Cream', 2, 2, 55, 110, 8),
-(5, 'Parker Pen', 3, 2, 100, 250, 10);
+(1, 'pen', 1, 1, 20, 60, 10),
+(2, 'surf excel', 1, 1, 55, 70, 10),
+(3, 'dove soap', 2, 2, 35, 40, 10),
+(4, 'nivea cream', 2, 2, 55, 110, 8),
+(5, 'pepsi bottle', 3, 2, 100, 250, 10);
 
 --
--- Triggers `product`
+-- defining various triggers on the table `product`
 --
+
+-- trigger-1 on table 'product': 
+--The trigger checks if the updated "Quantity_in_stock" value of the product is less than the "ReorderLevel" value.
+--If it is, then the "ProductID" and "Quantity_in_stock" values are inserted into the "depleted_product" table.
+
 DELIMITER $$
 CREATE TRIGGER `depleted_check_update` BEFORE UPDATE ON `product` FOR EACH ROW BEGIN
 Declare finished integer default 0;
@@ -182,8 +200,6 @@ FOR NOT FOUND SET finished = 1;
 
 if NEW.Quantity_in_stock < NEW.ReorderLevel THEN
 insert into depleted_product(ProductID,Quantity) values(NEW.ProductID,NEW.Quantity_in_stock);
-
-
 else
 open c1;
 get_cust: LOOP
@@ -205,6 +221,15 @@ END
 $$
 DELIMITER ;
 DELIMITER $$
+
+
+
+
+--Trigger-2 on table 'product':
+
+--This trigger is creating a constraint on the product table to ensure that a valid SupplierID is inserted into the table, and it also inserts 
+--data into the depleted_product table when a product's quantity in stock falls below the reorder level.
+
 CREATE TRIGGER `supplier_check` BEFORE INSERT ON `product` FOR EACH ROW BEGIN
 Declare finished integer default 0;
 Declare cust varchar(30);
@@ -235,10 +260,12 @@ END
 $$
 DELIMITER ;
 
+
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `supplier_information`
+-- defining the structure for table `supplier_information`
 --
 
 CREATE TABLE `supplier_information` (
@@ -249,17 +276,19 @@ CREATE TABLE `supplier_information` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `supplier_information`
+-- inserting values into the table `supplier_information`
 --
 
 INSERT INTO `supplier_information` (`SupplierID`, `SName`, `Address`, `Phone`) VALUES
-(1, 'Swargam', 'XYZ', '123456789'),
-(2, 'Sena', 'QWE', '987654329 ');
+(1, 'Kashish', 'XYZ', '123456789'),
+(2, 'Vishwa', 'QWE', '987654329 ');
+(2, 'Srushti', 'ABC', '9909909900 ');
+(2, 'Aanal', 'PQR', '9191091910 ');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `transaction_detail`
+-- defining the structure for table `transaction_detail`
 --
 
 CREATE TABLE `transaction_detail` (
@@ -272,22 +301,30 @@ CREATE TABLE `transaction_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `transaction_detail`
+-- inserting values into the table `transaction_detail`
 --
 
 INSERT INTO `transaction_detail` (`TransactionID`, `ProductID`, `Quantity`, `Discount`, `Total_Amount`, `Trans_Init_Date`) VALUES
-(22, 1, 20, 0, 1400, '2016-11-17'),
-(22, 2, 30, 0, 3000, '2016-11-17'),
-(25, 3, 20, 0, 1100, '2016-11-17'),
-(25, 4, 20, 0, 3000, '2016-11-17'),
-(27, 1, 20, 0, 1400, '2016-11-15'),
-(27, 2, 20, 0, 2000, '2016-11-15'),
-(27, 3, 20, 0, 1100, '2016-11-15'),
-(28, 4, 10, 0, 1500, '2016-11-16');
+(22, 1, 10, 0, 1400, '2023-04-18'),
+(22, 2, 20, 0, 3000, '2023-04-17'),
+(25, 3, 10, 0, 1100, '2023-04-17'),
+(25, 4, 5, 0, 3000, '2023-04-17'),
+(27, 1, 10, 0, 1400, '2023-04-18'),
+(27, 2, 15, 0, 2000, '2023-04-17'),
+(27, 3, 4, 0, 1100, '2023-04-15'),
+(28, 4, 12, 0, 1500, '2023-04-16');
 
 --
--- Triggers `transaction_detail`
+
+-- defining the triggers on the table `transaction_detail`
 --
+
+
+--Trigger-1 on table 'transaction_detail':
+--This trigger is being created for the table transaction_detail and is executed BEFORE INSERT for each row that is being inserted into that table.
+--this trigger ensures that the Quantity being inserted into the transaction_detail table is within the acceptable range of the corresponding ProductID 
+--and updates the Quantity_in_stock value accordingly.
+
 DELIMITER $$
 CREATE TRIGGER `max_min_quantity` BEFORE INSERT ON `transaction_detail` FOR EACH ROW BEGIN
 declare var1 int;
@@ -305,6 +342,17 @@ END
 $$
 DELIMITER ;
 DELIMITER $$
+
+
+
+
+--Trigger-2 on table 'transaction_detail':
+-- This trigger is similar to the previous one, but it is executed BEFORE UPDATE instead of BEFORE INSERT on the transaction_detail table.
+--This means that it will check the Quantity column being updated rather than inserted.
+-- this trigger ensures that the updated Quantity value for a particular ProductID in the transaction_detail table is within the acceptable range
+--and updates the Quantity_in_stock value in the Product table accordingly.
+
+
 CREATE TRIGGER `max_min_quantity_update` BEFORE UPDATE ON `transaction_detail` FOR EACH ROW BEGIN
 declare var1 int;
 declare var2 int;
@@ -325,7 +373,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `transaction_information`
+-- defining the structure for table `transaction_information`
 --
 
 CREATE TABLE `transaction_information` (
@@ -335,18 +383,80 @@ CREATE TABLE `transaction_information` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `transaction_information`
+-- inserting values into the table `transaction_information`
 --
 
 INSERT INTO `transaction_information` (`TransactionID`, `CustomerID`, `Trans_Init_Date`) VALUES
-(22, 'C12', '2016-11-17'),
-(25, 'C11', '2016-11-17'),
-(27, 'C13', '2016-11-15'),
-(28, 'C13', '2016-11-16');
+(22, 'C1', '2023-04-17'),
+(25, 'C1', '2023-04-17'),
+(27, 'C3', '2023-04-15'),
+(28, 'C2', '2023-04-16');
+(25, 'C2', '2023-04-17');
 
 --
--- Triggers `transaction_information`
+
+
 --
+-- defining the structure for table `sales_order`
+--
+
+CREATE TABLE `sales_order` (
+  `sales_order_id` int(11) NOT NULL,
+  `CustomerID` varchar(30) NOT NULL,
+  `sales_order_Date` date NOT NULL,
+  `sales_order_status` varchar(30) NOT NULL,
+   
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- inserting values into the table `sales_order`
+--
+
+INSERT INTO `sales_order` (`sales_order_id`, `CustomerID`, `sales_order_Date`,`sales_order_status`) VALUES
+(1, 'C1', '2023-04-17','delivered'),
+(2, 'C1', '2023-04-17','delivered'),
+(3, 'C3', '2023-04-15','not delivered'),
+(4, 'C2', '2023-04-16','delivered');
+(5, 'C2', '2023-04-17','delivered');
+
+--
+
+--
+-- defining the structure for table `sales_order_item`
+--
+
+CREATE TABLE `sales_order_item` (
+  `sales_order_item_id` int(11) NOT NULL,
+  `sales_order_id` int(11) NOT NULL,
+  `product_id` int NULL,
+  `sales_quantity_item` int NOT NULL,
+   `sales_order_item_unit_price` int NOT NULL,
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- inserting values into the table `transaction_information`
+--
+
+INSERT INTO `sales_order_item` (`sales_order_item_id`, `sales_order_id`, `product_id`,`sales_quantity_item`,`sales_order_item_unit_price`) VALUES
+(1,1, 10, 5, 100),
+(2,1 ,11 , 10, 120),
+(3,3 ,12, 15, 200 ),
+(4,4 ,13, 20, 230);
+(5, 5, 14, 25, 500);
+
+--
+
+
+
+
+-- defining triggers on the table `transaction_information`
+
+--trigger-1 on `transaction_information`:
+--This trigger creates a check before inserting a new row into the transaction_information table. 
+--The check ensures that the CustomerID specified in the new row exists in the customer_information table.
+--If the CustomerID does not exist, the trigger raises an error with the message "Customer does not exist" using the SIGNAL statement.
+
+
 DELIMITER $$
 CREATE TRIGGER `customer_check` BEFORE INSERT ON `transaction_information` FOR EACH ROW BEGIN
 Declare finished integer default 0;
@@ -373,6 +483,15 @@ END
 $$
 DELIMITER ;
 DELIMITER $$
+
+
+
+
+--trigger-2 on table `transaction_information`:
+--This trigger creates a check before updating a row in the transaction_information table. The check ensures that the CustomerID specified
+--in the updated row exists in the customer_information table. If the CustomerID does not exist, the trigger raises an error with the message
+--"Customer does not exist" using the SIGNAL statement.
+
 CREATE TRIGGER `customer_check_update` BEFORE UPDATE ON `transaction_information` FOR EACH ROW BEGIN
 Declare finished integer default 0;
 Declare cust varchar(30);
@@ -398,6 +517,17 @@ END
 $$
 DELIMITER ;
 DELIMITER $$
+
+
+
+--trigger-3 on table  `transaction_information`:
+--This trigger is defined on the transaction_information table and is executed before a row is deleted from the table.
+--The trigger decreases the quantity_in_stock value of the products that were included in the transaction being deleted.
+--Overall, this trigger ensures that the quantity_in_stock value of the products is correctly updated whenever a transaction 
+--is deleted from the transaction_information table.
+
+
+
 CREATE TRIGGER `decrease_quantity` BEFORE DELETE ON `transaction_information` FOR EACH ROW BEGIN
 
 Declare finished integer default 0;
@@ -425,12 +555,16 @@ $$
 DELIMITER ;
 
 --
--- Indexes for dumped tables
+
+
 --
 
 --
+
+-- altering the tables for adding appropraite primary key and foreign key constraints:
+
+
 -- Indexes for table `category`
---
 ALTER TABLE `category`
   ADD PRIMARY KEY (`CategoryID`);
 
@@ -498,7 +632,8 @@ ALTER TABLE `transaction_information`
 --
 -- Constraints for dumped tables
 --
-
+-- By including the AUTO_INCREMENT value in the dumped table, you can ensure that the table will function properly and 
+--maintain its data integrity when it is restored on another MySQL instance.
 --
 -- Constraints for table `product`
 --
